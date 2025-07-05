@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HyperTech - Dashboard</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-primary: #0A0F1F;
+            --bg-secondary: #121A2F;
+            --primary-color: #00D1FF; /* Azul mais tecnológico */
+            --accent-color: #FF00FF;
+            --robot-accent: #00FF9D; /* Verde robótico */
+            --text-primary: #FFFFFF;
+            --text-secondary: #CCCCCC;
+            --card-bg: rgba(18, 26, 47, 0.8);
+            --card-border: rgba(0, 209, 255, 0.3);
+            --circuit-color: rgba(0, 255, 157, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, var(--bg-primary) 0%, #000000 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path d="M0,0 L100,0 L100,100 L0,100 Z" fill="none" stroke="%2300D1FF" stroke-width="0.5" stroke-dasharray="5,5"/></svg>');
+            background-size: cover;
+            z-index: -2;
+            opacity: 0.1;
+        }
+
+        .circuit-line {
+            position: fixed;
+            background: var(--circuit-color);
+            z-index: -1;
+        }
+
+        .circuit-node {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: var(--robot-accent);
+            z-index: -1;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.3; }
+            50% { opacity: 1; }
+            100% { opacity: 0.3; }
+        }
+
+        @keyframes circuitGlow {
+            0% { box-shadow: 0 0 5px var(--robot-accent); }
+            50% { box-shadow: 0 0 15px var(--robot-accent); }
+            100% { box-shadow: 0 0 5px var(--robot-accent); }
+        }
+
+        @keyframes floatBot {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(2deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+
+        header {
+            padding: 2rem;
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+            position: relative;
+        }
+
+        header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 25%;
+            width: 50%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-color), transparent);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--primary-color), var(--robot-accent));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-weight: 300;
+            font-size: 1rem;
+        }
+
+        .robot-icon {
+            font-size: 2rem;
+            margin: 0 0.5rem;
+            color: var(--robot-accent);
+            display: inline-block;
+            animation: floatBot 4s ease-in-out infinite;
+        }
+
+        main {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2rem;
+            padding: 0 2rem 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .coluna-esquerda {
+            flex: 1;
+            min-width: 300px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .coluna-direita {
+            flex: 2;
+            min-width: 300px;
+        }
+
+        .profile-card, .projects-section, .team-card, .competition-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid var(--card-border);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            animation: fadeInUp 0.8s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-card:hover, .team-card:hover, .competition-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+            border-color: var(--robot-accent);
+        }
+
+        .profile-card::before, .team-card::before, .competition-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                linear-gradient(135deg, transparent 0%, var(--circuit-color) 100%),
+                url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="1" fill="%2300FF9D"/></svg>');
+            opacity: 0.1;
+            pointer-events: none;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .profile-pic {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease;
+            background-color: var(--bg-secondary);
+        }
+
+        .profile-pic:hover {
+            transform: scale(1.05);
+            border-color: var(--robot-accent);
+            animation: circuitGlow 2s infinite;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--robot-accent);
+        }
+
+        .profile-role {
+            color: var(--primary-color);
+            font-size: 0.9rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-bio {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .profile-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 1.5rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            padding: 0.5rem;
+            position: relative;
+        }
+
+        .stat-item::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 1px;
+            height: 30px;
+            background: var(--card-border);
+        }
+
+        .stat-item:last-child::after {
+            display: none;
+        }
+
+        .stat-number {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--robot-accent);
+        }
+
+        .stat-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .projects-section h2, .team-section h2 {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .projects-section h2::before, .team-section h2::before {
+            content: '';
+            display: inline-block;
+            width: 10px;
+            height: 10px;
+            background-color: var(--robot-accent);
+            margin-right: 10px;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        .projects-list {
+            list-style: none;
+            margin-bottom: 1.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .projects-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .projects-list::-webkit-scrollbar-track {
+            background: var(--bg-secondary);
+            border-radius: 10px;
+        }
+
+        .projects-list::-webkit-scrollbar-thumb {
+            background: var(--robot-accent);
+            border-radius: 10px;
+        }
+
+        .project-item {
+            padding: 0.8rem;
+            margin-bottom: 0.8rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            animation: fadeIn 0.5s ease-out;
+            border-left: 3px solid var(--primary-color);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-item:hover {
+            transform: translateX(5px);
+            border-left-color: var(--robot-accent);
+            box-shadow: 0 5px 15px rgba(0, 255, 157, 0.1);
+        }
+
+        .project-name {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-bottom: 0.3rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+        }
+
+        .project-name i {
+            margin-right: 8px;
+            color: var(--robot-accent);
+        }
+
+        .project-desc {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .project-status {
+            display: flex;
+            align-items: center;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .status-active {
+            background-color: var(--robot-accent);
+            animation: pulse 1.5s infinite;
+        }
+
+        .status-paused {
+            background-color: #FFA500;
+        }
+
+        .status-completed {
+            background-color: #00D1FF;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-card {
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            perspective: 1000px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            padding: 1.5rem 1rem;
+        }
+
+        .team-card:hover {
+            transform: scale(1.05) rotateX(5deg) rotateY(-5deg);
+        }
+
+        .team-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover .team-avatar {
+            border-color: var(--robot-accent);
+            transform: scale(1.1);
+        }
+
+        .team-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-primary);
+        }
+
+        .team-role {
+            color: var(--primary-color);
+            font-size: 0.8rem;
+            margin-bottom: 0.8rem;
+            font-weight: 500;
+        }
+
+        .team-skills {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.5rem;
+            margin-top: 0.8rem;
+        }
+
+        .skill-tag {
+            padding: 0.3rem 0.6rem;
+            background: rgba(0, 209, 255, 0.2);
+            border-radius: 20px;
+            font-size: 0.7rem;
+            color: var(--primary-color);
+        }
+
+        .competition-card {
+            grid-column: 1 / -1;
+            padding: 1.5rem;
+        }
+
+        .competition-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+        }
+
+        .competition-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--robot-accent);
+        }
+
+        .competition-timer {
+            display: flex;
+            align-items: center;
+            font-family: 'Courier New', monospace;
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            border: 1px solid var(--primary-color);
+        }
+
+        .competition-timer i {
+            margin-right: 0.5rem;
+            color: var(--robot-accent);
+        }
+
+        .competition-progress {
+            height: 10px;
+            background: var(--bg-secondary);
+            border-radius: 5px;
+            margin: 1.5rem 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-color), var(--robot-accent));
+            border-radius: 5px;
+            width: 65%;
+            position: relative;
+            animation: progressPulse 2s infinite;
+        }
+
+        @keyframes progressPulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+
+        .competition-checklist {
+            list-style: none;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item:hover {
+            background: rgba(0, 209, 255, 0.1);
+        }
+
+        .checklist-item.completed {
+            opacity: 0.7;
+        }
+
+        .checklist-checkbox {
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--primary-color);
+            border-radius: 4px;
+            margin-right: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .checklist-item.completed .checklist-checkbox {
+            background-color: var(--robot-accent);
+            border-color: var(--robot-accent);
+        }
+
+        .checklist-item.completed .checklist-checkbox::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 6 Free';
+            font-weight: 900;
+            color: var(--bg-primary);
+            font-size: 0.7rem;
+        }
+
+        .checklist-text {
+            flex: 1;
+            font-size: 0.9rem;
+        }
+
+        .checklist-item.completed .checklist-text {
+            text-decoration: line-through;
+            color: var(--text-secondary);
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            main {
+                flex-direction: column;
+            }
+            
+            .coluna-esquerda, .coluna-direita {
+                width: 100%;
+            }
+            
+            .team-grid {
+                grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="circuit-container"></div>
+    
+    <header>
+        <h1>HYPER<span class="robot-icon"><i class="fas fa-robot"></i></span>TECH</h1>
+        <p class="subtitle">Clube de Robótica  - Educa mais Aniceto M. Costa</p>
+    </header>
+    
+    <main>
+        <div class="coluna-esquerda">
+            <div class="profile-card">
+                <div class="profile-header">
+                    <img src="https://i.postimg.cc/CKMW3z5g/Captura-de-tela-2025-07-03-152730.png" alt="Profile Picture" class="profile-pic" id="profile-pic">
+                    <input type="file" id="file-input" class="file-input" accept="image/*">
+                    <div class="profile-info">
+                        <h2 class="profile-name">Clube  HyperTech</h2>
+                        <div class="profile-role">O melhor de todos!</div>
+                        <p class="profile-bio">Não é só tecnologia  é dominação! Enquanto os outros tentam, a gente faz. Campeões, criativos, imparáveis: somos o orgulho da escola e o pesadelo dos concorrentes. Se quer aprender, cola com a gente. Se quer competir… boa sorte! 🚀⚙️🔥</p>
+                    </div>
+                </div>
+                <div class="profile-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="total-projects">13</div>
+                        <div class="stat-label">Projetos</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="competitions">3</div>
+                        <div class="stat-label">Competições</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="skills">8</div>
+                        <div class="stat-label">Habilidades</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="projects-section">
+                <h2>nossos Projetos</h2>
+                <ul class="projects-list" id="projects-list">
+                    <li class="project-item">
+                        <div class="project-name"><i class="fas fa-robot"></i> APP DA ESCOLA</div>
+                        <p class="project-desc">Aplicativo do clube</p>
+                        <div class="project-status">
+                            <div class="status-dot status-active"></div>
+                            <span>Em desenvolvimento</span>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-name"><i class="fas fa-microchip"></i> CARRO DE LINHA</div>
+                        <p class="project-desc">otimo em percussos</p>
+                        <div class="project-status">
+                            <div class="status-dot status-completed"></div>
+                            <span>Concluído</span>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-name"><i class="fas fa-drone-alt"></i> Drone Inteligente</div>
+                        <p class="project-desc">Mapeamento 3D em tempo real</p>
+                        <div class="project-status">
+                            <div class="status-dot status-paused"></div>
+                            <span>Em pausa</span>
+                        </div>
+                    </li>
+                    <li class="project-item">
+                        <div class="project-name"><i class="fas fa-brain"></i>SISTEMA BIOMETRICO</div>
+                        <p class="project-desc">otimo para chamadas da escola</p>
+                        <div class="project-status">
+                            <div class="status-dot status-active"></div>
+                            <span>Em desenvolvimento</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="coluna-direita">
+            <div class="team-grid" id="team-grid">
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/Wbjkrk4j/Whats-App-Image-2025-07-04-at-18-12-13.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Kayky Bruno</h3>
+                    <div class="team-role">Líder do Clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">ROS</span>
+                        <span class="skill-tag">Python</span>
+                        <span class="skill-tag">IA</span>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/MHg3Pm3s/Whats-App-Image-2025-07-04-at-18-16-19.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Marcos luan</h3>
+                    <div class="team-role">vice líder do clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">Arduino</span>
+                        <span class="skill-tag">PCB Design</span>
+                        <span class="skill-tag">IoT</span>
+                    </div>
+                </div>
+
+                 <div class="team-card">
+                    <img src="https://i.postimg.cc/Tw9nLm4H/Captura-de-tela-2025-07-04-224923.png" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Ramone</h3>
+                    <div class="team-role">Padrinho do clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">Professor</span>
+                        <span class="skill-tag">organização</span>
+                        <span class="skill-tag">impressão 3D</span>
+                    </div>
+                </div>
+                
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/t4zJjSdV/Whats-App-Image-2025-07-04-at-18-53-51.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Oscar Lucas</h3>
+                    <div class="team-role">Secretario do clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">C++</span>
+                        <span class="skill-tag">ROS</span>
+                        <span class="skill-tag">arduino</span>
+                    </div>
+                </div>
+                  
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/BngZGbWC/Whats-App-Image-2025-07-04-at-21-46-10.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Maria Eduarda</h3>
+                    <div class="team-role">Camera girl do Clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">edição</span>
+                        <span class="skill-tag">marketing</span>
+                        <span class="skill-tag">cinegrafista</span>
+                    </div>
+                </div>
+                
+
+
+                <div class="team-card">
+                    <img src="https://i.postimg.cc/fRf8MnRs/Whats-App-Image-2025-07-04-at-20-05-00.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Victor Alexandre </h3>
+                    <div class="team-role">Tesoureiro do clube</div>
+                    <div class="team-skills">
+                        <span class="skill-tag">CAD</span>
+                        <span class="skill-tag">3D Printing</span>
+                        <span class="skill-tag">Prototipagem</span>
+                    </div>
+                </div>
+
+                 <div class="team-card">
+                    <img src="https://i.postimg.cc/K8nk3x6K/Whats-App-Image-2025-07-04-at-22-05-27.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Pedro Lucas </h3>
+                    <div class="team-role">Membro do clube</div>
+                    <div class="team-skills">
+                        
+                        <span class="skill-tag">programador</span>
+                        <span class="skill-tag">membro</span>
+                    </div>
+                </div>
+
+                                 <div class="team-card">
+                    <img src="https://i.postimg.cc/FRqjmmdT/Whats-App-Image-2025-07-04-at-22-16-42.png" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Isac</h3>
+                    <div class="team-role">Membro do clube</div>
+                    <div class="team-skills">
+                        
+                        <span class="skill-tag">organização</span>
+                        <span class="skill-tag">membro</span>
+                    </div>
+                </div>
+
+                                     <div class="team-card">
+                    <img src="https://i.postimg.cc/WbZxB1Ff/Whats-App-Image-2025-07-04-at-22-37-41.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">João Heineck</h3>
+                    <div class="team-role">Membro do clube</div>
+                    <div class="team-skills">
+                        
+                        <span class="skill-tag">organização</span>
+                        <span class="skill-tag">membro</span>
+                    </div>
+                </div>
+
+                                         <div class="team-card">
+                    <img src="https://i.postimg.cc/fT4MtFYp/Whats-App-Image-2025-07-04-at-22-51-54.jpg" alt="Team Member" class="team-avatar">
+                    <h3 class="team-name">Lucas Salatiel</h3>
+                    <div class="team-role">Membro do clube</div>
+                    <div class="team-skills">
+                        
+                        <span class="skill-tag">organização</span>
+                        <span class="skill-tag">membro</span>
+                    </div>
+                </div>
+                
+                
+                
+                
+                <div class="competition-card">
+                    <div class="competition-header">
+                        <h2 class="competition-title">paceria com escolas 2025</h2>
+                        <div class="competition-timer">
+                            <i class="fas fa-clock"></i>
+                            <span id="countdown">30d 08h 23m</span>
+                        </div>
+                    </div>
+                    
+                    <p>✨🤝 Vem aí uma parceria inesquecível em 2025! 🤝✨
+
+Estamos preparando algo grande para transformar nossos sonhos em realidade. Em 2025, unimos forças para crescer, inovar e fazer história juntos!
+
+🚀 Prepare-se: novidades, projetos e muitas conquistas estão por vir.
+💡 Objetivo: somar talentos, compartilhar ideias e criar resultados incríveis.
+
+Fique ligado e venha fazer parte dessa jornada com a gente!
+#Parceria2025 #NovosTempos #JuntosSomosMaisFortes</p>
+                    
+                    <div class="competition-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                    
+                    <ul class="competition-checklist">
+                        <li class="checklist-item completed">
+                            <div class="checklist-checkbox"></div>
+                            <span class="checklist-text">paceria com escolas</span>
+                        </li>
+                        <li class="checklist-item completed">
+                            <div class="checklist-checkbox"></div>
+                            <span class="checklist-text">Análise do regulamento</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span class="checklist-text">Protótipo do chassi</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span class="checklist-text">Programação de navegação</span>
+                        </li>
+                        <li class="checklist-item">
+                            <div class="checklist-checkbox"></div>
+                            <span class="checklist-text">Testes de campo</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Criar circuito de fundo
+            createCircuitBackground();
+            
+            // Animar contadores
+            animateCounters();
+            
+            // Configurar upload de imagem
+            setupImageUpload();
+            
+            // Configurar checklist interativo
+            setupChecklist();
+            
+            // Atualizar contador regressivo
+            updateCountdown();
+            
+            // Função para criar circuito de fundo
+            function createCircuitBackground() {
+                const container = document.getElementById('circuit-container');
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                
+                // Criar nós do circuito
+                const nodeCount = 15;
+                for (let i = 0; i < nodeCount; i++) {
+                    const node = document.createElement('div');
+                    node.className = 'circuit-node';
+                    
+                    // Posição aleatória
+                    const left = Math.random() * width;
+                    const top = Math.random() * height;
+                    node.style.left = `${left}px`;
+                    node.style.top = `${top}px`;
+                    
+                    // Tamanho aleatório
+                    const size = Math.random() * 4 + 2;
+                    node.style.width = `${size}px`;
+                    node.style.height = `${size}px`;
+                    
+                    // Pulsação aleatória
+                    const delay = Math.random() * 2;
+                    node.style.animation = `pulse ${Math.random() * 3 + 2}s ease-in-out ${delay}s infinite`;
+                    
+                    document.body.appendChild(node);
+                }
+                
+                // Criar linhas de conexão
+                const lineCount = 10;
+                for (let i = 0; i < lineCount; i++) {
+                    const line = document.createElement('div');
+                    line.className = 'circuit-line';
+                    
+                    // Posição e tamanho aleatórios
+                    const left = Math.random() * width;
+                    const top = Math.random() * height;
+                    const length = Math.random() * 200 + 50;
+                    const angle = Math.random() * 360;
+                    
+                    line.style.left = `${left}px`;
+                    line.style.top = `${top}px`;
+                    line.style.width = `${length}px`;
+                    line.style.transform = `rotate(${angle}deg)`;
+                    line.style.opacity = Math.random() * 0.3 + 0.1;
+                    
+                    document.body.appendChild(line);
+                }
+            }
+            
+            // Função para animar os contadores
+            function animateCounters() {
+                animateCounter(document.getElementById('total-projects'), 14);
+                animateCounter(document.getElementById('competitions'), 5);
+                animateCounter(document.getElementById('skills'), 8);
+            }
+            
+            // Função auxiliar para animar um contador
+            function animateCounter(element, target) {
+                const duration = 2000; // 2 segundos
+                const start = 0;
+                const increment = target / (duration / 16);
+                let current = start;
+                
+                const timer = setInterval(() => {
+                    current += increment;
+                    if (current >= target) {
+                        clearInterval(timer);
+                        current = target;
+                    }
+                    element.textContent = Math.floor(current);
+                }, 16);
+            }
+            
+            // Função para configurar o upload de imagem
+            function setupImageUpload() {
+                const profilePic = document.getElementById('profile-pic');
+                const fileInput = document.getElementById('file-input');
+                
+                profilePic.addEventListener('click', () => {
+                    fileInput.click();
+                });
+                
+                fileInput.addEventListener('change', (e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                        const reader = new FileReader();
+                        
+                        reader.onload = (event) => {
+                            profilePic.src = event.target.result;
+                        };
+                        
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+            
+            // Função para configurar checklist interativo
+            function setupChecklist() {
+                const items = document.querySelectorAll('.checklist-item');
+                
+                items.forEach(item => {
+                    item.addEventListener('click', function() {
+                        this.classList.toggle('completed');
+                    });
+                });
+            }
+            
+            // Função para atualizar contador regressivo
+            function updateCountdown() {
+                // Data alvo: 30 dias a partir de hoje
+                const targetDate = new Date();
+                targetDate.setDate(targetDate.getDate() + 15);
+                targetDate.setHours(targetDate.getHours() + 8);
+                targetDate.setMinutes(targetDate.getMinutes() + 23);
+                
+                const countdownElement = document.getElementById('countdown');
+                
+                function update() {
+                    const now = new Date();
+                    const diff = targetDate - now;
+                    
+                    if (diff <= 0) {
+                        countdownElement.textContent = "Competição iniciada!";
+                        return;
+                    }
+                    
+                    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                    
+                    countdownElement.textContent = `${days}d ${hours}h ${minutes}m`;
+                }
+                
+                update();
+                setInterval(update, 60000); // Atualizar a cada minuto
+            }
+        });
+    </script>
+</body>
+</html>
